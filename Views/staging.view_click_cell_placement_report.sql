@@ -1,0 +1,35 @@
+CREATE OR REPLACE VIEW staging.view_click_cell_placement_report
+AS SELECT view_click_cell_placement_bridge.drop_date,
+    view_click_cell_placement_bridge.cell_id,
+    view_click_cell_placement_bridge.sent_impression,
+    view_click_cell_placement_bridge.open_impression,
+    view_click_cell_placement_bridge.total_clicks,
+    view_click_cell_placement_bridge.unique_clicks,
+    view_click_cell_placement_bridge.campaign_id,
+    view_click_cell_placement_bridge.theme,
+    view_click_cell_placement_bridge.portfolio_name AS portfolio,
+    view_click_cell_placement_bridge.team_name AS product_team,
+    view_click_cell_placement_bridge.cards_name AS product,
+    placements.content_category,
+    placements.content_subcategory,
+    view_click_cell_placement_bridge.alias_placement_index,
+    placements.content_title,
+    placements.content_detail,
+    view_click_cell_placement_bridge.alias_order,
+    view_click_cell_placement_bridge.alias_section,
+    view_click_cell_placement_bridge.alias_slot,
+    placements.width,
+    placements.topic,
+    placements.targeting,
+    placements.targeting_type,
+    view_click_cell_placement_bridge.alias_cta,
+    view_click_cell_placement_bridge.subject_line,
+    view_click_cell_placement_bridge.preview_line,
+    view_click_cell_placement_bridge.segment_details,
+    placements.test_details,
+    placements.test_type,
+    placements.test_variant
+   FROM staging.view_click_cell_placement_bridge
+     LEFT JOIN staging.placements ON view_click_cell_placement_bridge.alias_placement_index::text = placements.index::text AND view_click_cell_placement_bridge.campaign_id::text = placements.campaign_id::text
+  WHERE view_click_cell_placement_bridge.drop_date <= '2020-03-01'::date OR view_click_cell_placement_bridge.drop_date IS NULL
+  ORDER BY view_click_cell_placement_bridge.drop_date, view_click_cell_placement_bridge.cell_id, (length(view_click_cell_placement_bridge.alias_placement_index::text));
